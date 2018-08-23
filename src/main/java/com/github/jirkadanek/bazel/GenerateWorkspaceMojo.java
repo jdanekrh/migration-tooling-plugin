@@ -250,17 +250,17 @@ public class GenerateWorkspaceMojo extends AbstractMojo {
                 "  native.java_library(\n" +
                         "      name = \"" + bazelName + "\",\n" +
                         "      visibility = [\"//visibility:public\"],\n" +
-                        "      exports = [\"@" + bazelName + "//" + type + "\"],\n" +
-                        "      runtime_deps = [");
-        for (DependencyNode dep : n.getChildren()) {
-            String depName = getBazelName(dep.getArtifact());
+                        "      exports = [\"@" + bazelName + "//" + type + "\"],\n");
+        if (!n.getChildren().isEmpty()) {
+            sb.append("      runtime_deps = [\n");
+            for (DependencyNode dep : n.getChildren()) {
+                String depName = getBazelName(dep.getArtifact());
+                sb.append("          \":" + depName + "\",\n");
+            }
             sb.append(
-                    "          \":" + depName + "\",\n"
-            );
+                    "      ],\n");
         }
-        sb.append(
-                "      ],\n" +
-                        "  )\n");
+        sb.append("  )\n");
     }
 
     private String getMavenName(Artifact a) throws OverConstrainedVersionException {
